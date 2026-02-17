@@ -1,0 +1,80 @@
+services:
+  db:
+    image: mariadb:11.4
+    container_name: pdns-db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MARIADB_DATABASE: pdns
+      MARIADB_USER: pdns
+      MARIADB_PASSWORD: ${MYSQL_PDNS_PASSWORD}
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - pdns-net
+
+  pdns:
+    image: powerdns/pdns-auth-49:latest
+    container_name: pdns-auth
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    command:
+      - --api=yes
+      - --api-key=${PDNS_API_KEY}
+      - --webserver=yes
+      - --webserver-address=0.0.0.0
+      - --webserver-port=8081
+      - --local-address=0.0.0.0
+      - --local-port=53
+      - --launch=gmysql
+      - --gmysql-host=db
+      - --gmysql-port=3306
+      - --gmysql-dbname=pdns
+      - --gmysql-user=pdns
+      - --gmysql-password=${MYSQL_PDNS_PASSWORD}
+      - --gmysql-dnssec=yes
+      - --default-soa-content=ns1.example.org hostmaster.example.org 0 10800 3600 604800 3600
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "8081:8081"
+    networks:
+      - pdns-net
+
+  pdns-admin:
+    image: ngoduykhanh/powerdns-admin:latest
+    container_name: pdns-admin
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      pdns:
+        condition: service_started
+    environment:
+      SECRET_KEY: ${PDNS_ADMIN_SECRET_KEY}
+      SQLALCHEMY_DATABASE_URI: mysql+pymysql://pdns:${MYSQL_PDNS_PASSWORD}@db/pdnsadmin
+      GUNICORN_TIMEOUT: 120
+      BIND_ADDRESS: 0.0.0.0
+      PORT: 9191
+      PDNS_API_URL: http://pdns:8081
+      PDNS_API_KEY: ${PDNS_API_KEY}
+      PDNS_VERSION: 4.9
+    volumes:
+      - ./data/pdns-admin:/data
+    ports:
+      - "9191:9191"
+    networks:
+      - pdns-net
+
+networks:
+  pdns-net:
+    driver: bridge
