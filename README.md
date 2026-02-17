@@ -47,6 +47,25 @@
 - API PowerDNS: `http://<host>:8081/api/v1/servers/localhost`
   - используйте ключ `PDNS_API_KEY` из `.env`
 
+## Порт 53 занят systemd-resolved
+
+Если dnsdist не стартует из‑за «port is already allocated», на хосте обычно слушает **systemd-resolved**. Освободить порт 53:
+
+1. **Отключить DNS-заглушку resolved:**
+   ```bash
+   sudo mkdir -p /etc/systemd/resolved.conf.d
+   echo -e '[Resolve]\nDNSStubListener=no' | sudo tee /etc/systemd/resolved.conf.d/disable-stub.conf
+   sudo systemctl restart systemd-resolved
+   ```
+
+2. **Сделать резолвером системы dnsdist** (чтобы сам хост ходил в DNS через ваш стек):
+   - В `resolved` можно указать DNS=127.0.0.1 (тогда резолвер — кто слушает на 127.0.0.1:53, т.е. dnsdist после проброса порта).
+   - Или статически прописать в `/etc/resolv.conf` строку `nameserver 127.0.0.1` (если не используете resolved для DNS).
+
+3. Запустить стек: `docker compose up -d`.
+
+**Если порт 53 трогать не хотите:** в `docker-compose.yml` у сервиса `dnsdist` замените проброс портов на, например, `"5353:53"` и используйте для DNS адрес `<хост>:5353`.
+
 ## Примечания
 
 - Для порта `53` обычно нужны права root или CAP_NET_BIND_SERVICE.
