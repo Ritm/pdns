@@ -20,6 +20,22 @@ services:
     networks:
       - pdns-net
 
+  dnsdist:
+    image: powerdns/dnsdist-19:latest
+    container_name: pdns-dnsdist
+    restart: unless-stopped
+    depends_on:
+      pdns:
+        condition: service_started
+    command: ["-c", "/etc/dnsdist/dnsdist.lua"]
+    volumes:
+      - ./dnsdist:/etc/dnsdist:ro
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    networks:
+      - pdns-net
+
   pdns:
     image: powerdns/pdns-auth-49:latest
     container_name: pdns-auth
@@ -43,9 +59,9 @@ services:
       - --gmysql-password=${MYSQL_PDNS_PASSWORD}
       - --gmysql-dnssec=yes
       - --default-soa-content=ns1.example.org hostmaster.example.org 0 10800 3600 604800 3600
+    expose:
+      - "53"
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
       - "8081:8081"
     networks:
       - pdns-net
