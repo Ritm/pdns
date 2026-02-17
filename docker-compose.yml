@@ -45,21 +45,11 @@ services:
       db:
         condition: service_healthy
     command:
-      - --api=yes
+      - --config-dir=/etc/powerdns-custom
       - --api-key=${PDNS_API_KEY}
-      - --webserver=yes
-      - --webserver-address=0.0.0.0
-      - --webserver-port=8081
-      - --local-address=0.0.0.0
-      - --local-port=53
-      - --launch=gmysql
-      - --gmysql-host=db
-      - --gmysql-port=3306
-      - --gmysql-dbname=pdns
-      - --gmysql-user=pdns
       - --gmysql-password=${MYSQL_PDNS_PASSWORD}
-      - --gmysql-dnssec=yes
-      - --default-soa-content=ns1.example.org hostmaster.example.org 0 10800 3600 604800 3600
+    volumes:
+      - ./pdns:/etc/powerdns-custom:ro
     expose:
       - "53"
     ports:
@@ -68,7 +58,8 @@ services:
       - pdns-net
 
   pdns-admin:
-    image: ngoduykhanh/powerdns-admin:latest
+    build: ./pdns-admin
+    image: pdns-admin:local
     container_name: pdns-admin
     restart: unless-stopped
     depends_on:

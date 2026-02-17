@@ -21,6 +21,8 @@
 - `.env.example` - пример переменных окружения
 - `dnsdist/dnsdist.lua` - конфиг dnsdist (кэш, пулы, локальные зоны)
 - `dnsdist/upstreams.lua` - **список вышестоящих DoH-серверов** (редактируйте под себя)
+- `pdns/pdns.conf` - конфиг PowerDNS Authoritative (gmysql, без gsqlite3)
+- `pdns-admin/Dockerfile` - образ панели с драйвером pymysql для MySQL
 - `mysql/init/01-pdns.sql` - инициализация схемы PowerDNS и БД панели
 - `data/mysql` - данные MariaDB (на хосте)
 - `data/pdns-admin` - данные PowerDNS-Admin (на хосте)
