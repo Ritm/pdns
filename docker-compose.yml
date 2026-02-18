@@ -12,10 +12,11 @@ services:
       - ./data/mysql:/var/lib/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
-      interval: 10s
+      # Ждём появления таблицы pdns.domains (скрипты init выполняются после старта сервера)
+      test: ["CMD", "mariadb", "-uroot", "-p${MYSQL_ROOT_PASSWORD}", "-e", "SELECT 1 FROM pdns.domains LIMIT 0"]
+      interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 30
       start_period: 30s
     networks:
       - pdns-net

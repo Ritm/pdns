@@ -68,6 +68,22 @@
 
 **Если порт 53 трогать не хотите:** в `docker-compose.yml` у сервиса `dnsdist` замените проброс портов на, например, `"5353:53"` и используйте для DNS адрес `<хост>:5353`.
 
+## Ошибка «Table 'pdns.domains' doesn't exist»
+
+Появляется, если каталог `data/mysql` уже существовал до добавления скрипта инициализации — скрипты в `mysql/init/` выполняются только при **первом** запуске с пустой БД. Применить схему вручную (подставьте пароль root из `.env`):
+
+```bash
+docker exec -i pdns-db mysql -uroot -p'ВАШ_MYSQL_ROOT_PASSWORD' < mysql/init/01-pdns.sql
+```
+
+Или из каталога проекта с подстановкой из `.env`:
+
+```bash
+source .env 2>/dev/null; docker exec -i pdns-db mysql -uroot -p"${MYSQL_ROOT_PASSWORD}" < mysql/init/01-pdns.sql
+```
+
+После этого перезапустите pdns: `docker compose restart pdns-auth`.
+
 ## Ошибка «ERROR: for pdns 'ContainerConfig'»
 
 Известный баг Docker Compose при пересоздании контейнеров. Решение: удалить контейнеры и поднять заново:
