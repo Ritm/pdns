@@ -46,7 +46,7 @@
 ## Проверка
 
 - Откройте панель: `http://<host>:9191`
-- API PowerDNS: `http://<host>:8081/api/v1/servers/localhost`
+- API PowerDNS: `http://<host>:8081/api/v1/servers/localhost` (в браузере по корню `/` может быть «сброс» — API отдаёт JSON по путям `/api/...`)
   - используйте ключ `PDNS_API_KEY` из `.env`
 
 ## Порт 53 занят systemd-resolved
