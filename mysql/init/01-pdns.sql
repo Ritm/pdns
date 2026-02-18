@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS domains (
   type                  VARCHAR(8) NOT NULL,
   notified_serial       INT UNSIGNED DEFAULT NULL,
   account               VARCHAR(40) CHARACTER SET utf8 DEFAULT NULL,
-  options               VARCHAR(64000) DEFAULT NULL,
+  options               TEXT DEFAULT NULL,
   catalog               VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS records (
   domain_id             INT DEFAULT NULL,
   name                  VARCHAR(255) DEFAULT NULL,
   type                  VARCHAR(10) DEFAULT NULL,
-  content               VARCHAR(64000) DEFAULT NULL,
+  content               TEXT DEFAULT NULL,
   ttl                   INT DEFAULT NULL,
   prio                  INT DEFAULT NULL,
   disabled              TINYINT(1) DEFAULT 0,
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS comments (
   type                  VARCHAR(10) NOT NULL,
   modified_at           INT NOT NULL,
   account               VARCHAR(40) CHARACTER SET utf8 NOT NULL,
-  comment               VARCHAR(64000) NOT NULL,
+  comment               TEXT NOT NULL,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
