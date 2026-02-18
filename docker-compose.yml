@@ -28,7 +28,7 @@ services:
       pdns:
         condition: service_started
     entrypoint: ["/usr/bin/tini", "--", "/usr/local/bin/dnsdist"]
-    command: ["--supervised", "--disable-syslog", "-c", "/etc/dnsdist/dnsdist.lua"]
+    command: ["--supervised", "--disable-syslog", "--config", "/etc/dnsdist/dnsdist.lua"]
     volumes:
       - ./dnsdist:/etc/dnsdist:ro
     ports:

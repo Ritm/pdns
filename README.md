@@ -68,6 +68,23 @@
 
 **Если порт 53 трогать не хотите:** в `docker-compose.yml` у сервиса `dnsdist` замените проброс портов на, например, `"5353:53"` и используйте для DNS адрес `<хост>:5353`.
 
+## Ошибка «ERROR: for pdns 'ContainerConfig'»
+
+Известный баг Docker Compose при пересоздании контейнеров. Решение: удалить контейнеры и поднять заново:
+
+```bash
+docker compose down
+docker compose up -d
+```
+
+Если не помогло — пересоздать только pdns и перезапустить стек:
+
+```bash
+docker compose stop pdns-auth
+docker rm -f pdns-auth 2>/dev/null
+docker compose up -d
+```
+
 ## Примечания
 
 - Для порта `53` обычно нужны права root или CAP_NET_BIND_SERVICE.
