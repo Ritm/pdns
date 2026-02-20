@@ -81,7 +81,7 @@ services:
     volumes:
       - ./data/pdns-admin:/data
     ports:
-      - "9191:8000"
+      - "127.0.0.1:9191:8000"
     networks:
       - pdns-net
 
