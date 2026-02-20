@@ -20,6 +20,7 @@
 - `docker-compose.yml` - сервисы
 - `.env.example` - пример переменных окружения
 - `dnsdist/dnsdist.lua` - конфиг dnsdist (кэш, пулы, локальные зоны)
+- `dnsdist/console-client.lua` - только ключ консоли (для подключения клиента без загрузки полного конфига)
 - `dnsdist/upstreams.lua` - **список вышестоящих DoH-серверов** (редактируйте под себя)
 - `pdns/pdns.conf` - конфиг PowerDNS Authoritative (gmysql, без gsqlite3)
 - `pdns-admin/Dockerfile` - образ панели с драйвером pymysql для MySQL
@@ -72,13 +73,19 @@ dig @127.0.0.1 ya.ru +short
 
 **3. Статистика кэша dnsdist**
 
-Консоль dnsdist слушает порт 5199 внутри контейнера. Подключение с ключом (тот же, что в `setKey()` в `dnsdist.lua`):
+Консоль dnsdist слушает порт 5199 внутри контейнера. Подключение — один из способов:
 
+**Способ 1 (минимальный конфиг, без ошибок):**
+```bash
+docker exec -it pdns-dnsdist dnsdist -C /etc/dnsdist/console-client.lua -c 127.0.0.1:5199
+```
+
+**Способ 2 (только ключ, без конфига):**
 ```bash
 docker exec -it pdns-dnsdist dnsdist -c 127.0.0.1:5199 -k "dnsdist-console"
 ```
 
-Сообщение «Unable to read configuration from '/etc/dnsdist/dnsdist.conf'» при подключении клиента можно игнорировать — конфиг нужен только серверу, клиенту достаточно ключа `-k`.
+Если в каталоге есть `dnsdist.conf` с полным конфигом, клиент по умолчанию его подхватит и упадёт на `newServer("pdns:53")`. Удалите `dnsdist.conf` в контейнере (или не копируйте туда полный конфиг) или используйте способ 1 с `console-client.lua`.
 
 В приглашении консоли ввести (и нажать Enter):
 
