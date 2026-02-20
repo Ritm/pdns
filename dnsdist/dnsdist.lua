@@ -9,8 +9,7 @@ pc = newPacketCache(100000, {
   minTTL = 0,
   temporaryFailureTTL = 60,
   staleTTL = 60,
-  dontAge = false,
-  shuffle = false
+  dontAge = false
 })
 getPool(""):setCache(pc)
 
