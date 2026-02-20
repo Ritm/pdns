@@ -30,4 +30,6 @@ dofile("/etc/dnsdist/upstreams.lua")
 -- Все остальные запросы обрабатываются пулом по умолчанию (DoH + кэш)
 -- Дополнительных вышестоящих серверов нет — только перечисленные в upstreams.lua
 
+-- Ключ консоли (для подключения: dnsdist -C /etc/dnsdist/dnsdist.lua -c 127.0.0.1:5199)
+setKey("dnsdist-console")
 setConsoleACL({"0.0.0.0/0", "::/0"})
