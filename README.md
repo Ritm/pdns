@@ -72,11 +72,13 @@ dig @127.0.0.1 ya.ru +short
 
 **3. Статистика кэша dnsdist**
 
-Консоль dnsdist слушает порт 5199 внутри контейнера. Подключение с ключом из `dnsdist.lua` (setKey) и вывод статистики кэша:
+Консоль dnsdist слушает порт 5199 внутри контейнера. Подключение с ключом (тот же, что в `setKey()` в `dnsdist.lua`):
 
 ```bash
 docker exec -it pdns-dnsdist dnsdist -c 127.0.0.1:5199 -k "dnsdist-console"
 ```
+
+Сообщение «Unable to read configuration from '/etc/dnsdist/dnsdist.conf'» при подключении клиента можно игнорировать — конфиг нужен только серверу, клиенту достаточно ключа `-k`.
 
 В приглашении консоли ввести (и нажать Enter):
 
