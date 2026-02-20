@@ -73,19 +73,13 @@ dig @127.0.0.1 ya.ru +short
 
 **3. Статистика кэша dnsdist**
 
-Консоль dnsdist слушает порт 5199 внутри контейнера. Подключение — один из способов:
+Консоль dnsdist слушает порт 5199 внутри контейнера. Подключение (ключ задан в `console-client.lua` и в `dnsdist.lua`, в формате base64):
 
-**Способ 1 (минимальный конфиг, без ошибок):**
 ```bash
 docker exec -it pdns-dnsdist dnsdist -C /etc/dnsdist/console-client.lua -c 127.0.0.1:5199
 ```
 
-**Способ 2 (только ключ, без конфига):**
-```bash
-docker exec -it pdns-dnsdist dnsdist -c 127.0.0.1:5199 -k "dnsdist-console"
-```
-
-Если в каталоге есть `dnsdist.conf` с полным конфигом, клиент по умолчанию его подхватит и упадёт на `newServer("pdns:53")`. Удалите `dnsdist.conf` в контейнере (или не копируйте туда полный конфиг) или используйте способ 1 с `console-client.lua`.
+Если в каталоге есть `dnsdist.conf` с полным конфигом, клиент по умолчанию его подхватит и упадёт на `newServer("pdns:53")`. В каталоге должны быть только `dnsdist.lua`, `console-client.lua` и `upstreams.lua`.
 
 В приглашении консоли ввести (и нажать Enter):
 

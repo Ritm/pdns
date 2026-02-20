@@ -29,7 +29,7 @@ dofile("/etc/dnsdist/upstreams.lua")
 -- Все остальные запросы обрабатываются пулом по умолчанию (DoH + кэш)
 -- Дополнительных вышестоящих серверов нет — только перечисленные в upstreams.lua
 
--- Консоль: явно слушать 5199 и задать ключ (подключение: dnsdist -c 127.0.0.1:5199 -k "dnsdist-console")
+-- Консоль: явно слушать 5199 и ключ в base64 (подключение: dnsdist -C /etc/dnsdist/console-client.lua -c 127.0.0.1:5199)
 controlSocket("0.0.0.0:5199")
-setKey("dnsdist-console")
+setKey("MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI=")
 setConsoleACL({"0.0.0.0/0", "::/0"})
